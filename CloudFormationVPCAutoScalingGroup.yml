@@ -19,8 +19,6 @@ Resources:
       - Key: Name
         Value:  VPC
 
-
-
   # Create internet access to VPC:      
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -31,8 +29,6 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
-
-
 
   # Create 2 public subnets:
   PublicSubnetA:
@@ -54,8 +50,6 @@ Resources:
       - Key: Name
         Value: !Sub ${AWS::StackName}-Public-B
   
-
-
    # Create 2 private subnets:
   PrivateSubnetA:
     Type: AWS::EC2::Subnet
@@ -76,8 +70,6 @@ Resources:
       - Key: Name
         Value: !Sub ${AWS::StackName}-Private-B
 
-
-
   # Create route tables for Public subnets:
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -94,8 +86,6 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
       
-
-
   # Create route tables for Private subnets:
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
@@ -110,8 +100,6 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable
       DestinationCidrBlock: 0.0.0.0/0
      
-
-
   # Associate Subnets:
   # Attach the public subnets to public route tables, 
   # and attach the private subnets to private route tables:    
@@ -136,7 +124,6 @@ Resources:
       SubnetId: !Ref PrivateSubnetB
       RouteTableId: !Ref PrivateRouteTable
 
-
  #Create Security Group
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -153,12 +140,11 @@ Resources:
           ToPort: 22
           CidrIp: !Ref SSHLocation
           
-  
   # Create Launch Template
   LaunchTemplate:
     Type: 'AWS::EC2::LaunchTemplate'
     Properties:
-      LaunchTemplateName: !Sub '${AWS::StackName}-launchTemplate-KP-LUIT'
+      LaunchTemplateName: !Sub '${AWS::StackName}--launch-template-for-auto-scaling'
       LaunchTemplateData:
         NetworkInterfaces:
           - DeviceIndex: 0
@@ -181,7 +167,6 @@ Resources:
               amazon-linux-extras install epel -y
               yum install stress -y
               
-  
   # Create AutoScaling Group
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -194,11 +179,8 @@ Resources:
         Version: !Ref LaunchTemplateVersionNumber
       VPCZoneIdentifier:
         - !Ref PublicSubnetA
-        - !Ref PublicSubnetB  
-         MetricsCollection:
-        - Granularity: 1Minute
-      
-  
+        - !Ref PublicSubnetB
+            
   # AutoScaling Group Tracking Policy
   myCPUPolicy:
     Type: AWS::AutoScaling::ScalingPolicy
@@ -209,7 +191,6 @@ Resources:
         PredefinedMetricSpecification:
           PredefinedMetricType: ASGAverageCPUUtilization
         TargetValue: !Ref CPUPolicyTargetValue            
-
 
  # Scale if CPU goes above 50% 
   CloudWatchAlert50:
