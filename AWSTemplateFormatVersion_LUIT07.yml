@@ -72,8 +72,6 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 
-  #------------------------------------------------------------------------------------------------------------------------
-
   # Create Security Group
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
